@@ -1,0 +1,7 @@
+Dataset: C:\Users\SreeTejaChappidi\Desktop\check\data\Vegetable Images
+Model: C:\Users\SreeTejaChappidi\Desktop\check\model\vegetable_cnn.pt
+Architecture: mobilenet_v2
+Training method: pretrained MobileNetV2 features + logistic regression
+Train subset per class: 100
+Validation accuracy: 0.9890
+Test accuracy: 0.9920

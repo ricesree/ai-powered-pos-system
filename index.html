@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Swadesh Food Mart POS</title>
+</head>
+<body>
+
+<h2>Swadesh Food Mart POS</h2>
+
+<input id="search" placeholder="Search..." />
+
+<br><br>
+
+<button onclick="openScanner()">📷 Scan Vegetable</button>
+
+<div id="scanner" style="display:none; border:1px solid black; padding:10px; margin-top:10px;">
+  <video id="video" width="300" autoplay></video>
+  <br><br>
+  <button onclick="capture()">Capture</button>
+  <button onclick="closeScanner()">Close</button>
+
+  <p id="prediction"></p>
+</div>
+
+<h3>Vegetables</h3>
+<div id="vegGrid"></div>
+
+<h3>Cart</h3>
+<div id="cart"></div>
+
+<script src="renderer.js"></script>
+</body>
+</html>

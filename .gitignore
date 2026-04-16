@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+.mplconfig/
+node_modules/
+out/
+data/
+archive.zip
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
