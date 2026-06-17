@@ -1,39 +1,49 @@
 # EfficientNet-B3 Branch (`efficientnetb3-model`)
 
-Standalone EfficientNet-B3 vegetable classifier API for Google Cloud Run.
+Standalone EfficientNet-B3 produce classifier API for Google Cloud Run (32 classes).
 
-This repository branch contains **only** `api_efficientnet_b3/` — no POS UI, no YOLO code, no datasets.
+## Layout
 
-## Quick start
-
-1. Upload model to GCS (not Git):
-
-```bash
-gsutil cp efficientnet_b3.onnx gs://vegdetect-pos-models/models/efficientnet_b3.onnx
+```
+api_efficientnet_b3/   Cloud Run service (FastAPI + ONNX via GCS)
+train.py               Local training pipeline
+deploy_cloud_run.ps1   Upload model to GCS + Cloud Build deploy
+pull_gcs_feedback.py   Download live feedback from GCS
+merge_dataset.py       Merge feedback into dataset_overall/
+split_dataset.py       Create train/val/test splits
 ```
 
-2. Deploy:
+**Do not commit** `.onnx`, `.pth`, datasets, or `results_new/` model binaries.
 
-```bash
-gcloud builds submit --config=api_efficientnet_b3/cloudbuild.yaml .
+## Model upload (before deploy)
+
+```powershell
+gsutil cp results_new\efficientnet_b3.onnx gs://vegdetect-pos-models/models/efficientnet_b3.onnx
+gsutil cp api_efficientnet_b3\class_thresholds.csv gs://vegdetect-pos-models/models/class_thresholds.csv
 ```
 
-3. Open Swagger UI: `https://<cloud-run-url>/docs`
+## Deploy
 
-## Endpoints
+```powershell
+gcloud auth login
+.\deploy_cloud_run.ps1
+```
+
+Service: `vegdetect-api` · Region: `us-central1` · Project: `wezard-similarity-score`
+
+## API
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/health` | Health check |
+| GET | `/` | Camera UI |
 | GET | `/docs` | Swagger UI |
-| POST | `/api/infer` | Upload image (form field: `file`) |
+| GET | `/health` | Health check |
+| POST | `/api/infer` | Classify image (`file` field) |
 
-## Model files
+## Training
 
-`.onnx` and `.pt` files are **never** committed to Git. They live in GCS and are downloaded during Cloud Build.
+```powershell
+python train.py
+```
 
-See `api_efficientnet_b3/README.md` and `api_efficientnet_b3/models/README.md`.
-
-## Postman
-
-Import `api_efficientnet_b3/VeggieLens_API.postman_collection.json`.
+Outputs go to `results_new/` (metrics, ONNX, thresholds). Then upload ONNX to GCS and redeploy.
